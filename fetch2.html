@@ -14,36 +14,67 @@
 
 <body>
   <!-- Product section-->
-  <section  class="py-5">
+  <section class="py-5">
     <div class="container px-4 px-lg-5 my-5">
       <div id="result" class="row gx-4 gx-lg-5 align-items-center">
-     
+
       </div>
     </div>
   </section>
 
-
   <script>
-    let recipeId = sessionStorage.getItem("cardId")
+    const recipeId = sessionStorage.getItem("cardId")
     fetch(`https://dummyjson.com/recipes/${recipeId}`).then((res) => {
       res.json().then((data) => {
         console.log(data);
-        const recipes = data.recipes
-         recipes.forEach(recipe => {
-          result.innerHTML=`  <div class="col-md-12">
-          <div class="small mb-1"></div>
-          <h1 class="display-5 fw-bolder">${recipe.name}</h1>
-         ${recipe.ingredients}
-          <p class="lead"></p>
+        const resultDiv = document.getElementById('result');
+
+        const ingredientsList = data.ingredients &&
+          data.ingredients.map(ingredient =>
+            `<li class="list-group-item">${ingredient}</li>`
+          ).join('')
+
+        const instructionsList = data.instructions &&
+          data.instructions.map(step =>
+            `<li class="list-group-item">${step}</li>`
+          ).join('')
+
+        resultDiv.innerHTML = `  <div class="col-md-12">
+          <div class="small mb-1">
+    Cuisine: ${data.cuisine} | Difficulty: ${data.difficulty}
+  </div>
+          <h1 class="display-5 fw-bolder">${data.name}</h1>
+          <div class="row  bg-warning bg-opacity-50 text-dark">
+           <div class="mb-4 col-md-6">
+                  <h5 class="mt-4 mb-2">Ingredients:</h5>
+                  <ul class="list-group list-group-flush">
+                    ${ingredientsList}
+                  </ul>
+              </div>
+            <div class="mb-4 col-md-6">
+                  <h5 class=" mt-4 mb-2">Instructions:</h5>
+                  <ol class="list-group list-group-numbered list-group-flush">
+                    ${instructionsList}
+                  </ol>
+              </div>
+          </div>
+          <div class="mb-3">
+               Rating: ${data.rating} |
+               Reviews: ${data.reviewCount}
+          </div>
+          <p>
+            <b>Prep Time:</b> ${data.prepTimeMinutes} mins |
+            <b>Cook Time:</b> ${data.cookTimeMinutes} mins |
+            <b>Servings:</b> ${data.servings}
+          </p>
           <div class="d-flex">
             
-            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+            <button class="btn btn-dark flex-shrink-0" type="button">
               <i class="bi-cart-fill me-1"></i>
               Download
             </button>
           </div>
         </div>`
-      })
       })
     }).catch((reason) => {
       console.log(reason);
